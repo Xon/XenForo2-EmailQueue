@@ -12,6 +12,12 @@ class Mail extends XFCP_Mail
 
     public function send(\Swift_Transport $transport = null)
     {
+        if ($this->setupError)
+        {
+            $this->logSetupError($this->setupError);
+            return 0;
+        }
+
         $options = \XF::options();
         if ($this->svEmailQueueExclude === null)
         {
@@ -23,17 +29,14 @@ class Mail extends XFCP_Mail
             return $this->queue();
         }
 
-        $message = $this->getSendableMessage();
-        if (!$message->getTo())
-        {
-            return false;
-        }
-        $sent = $this->mailer->send($message, $transport);
-
+        $sent = parent::send($transport);
         if ($sent)
         {
             return $sent;
         }
+
+        // getSendableMessage only renders once
+        $message = $this->getSendableMessage();
 
         return $this->mailer->getQueue()->queueFailed($message);
     }

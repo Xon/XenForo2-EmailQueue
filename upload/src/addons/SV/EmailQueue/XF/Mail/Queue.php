@@ -45,6 +45,7 @@ class Queue extends XFCP_Queue
 
         $batchSize = $options->sv_emailqueue_batchsize ? $options->sv_emailqueue_batchsize : null;
 
+        $transport = $mailer->getDefaultTransport();
         do
         {
             $queue = $this->getQueue($maxRunTime ? $batchSize : null);
@@ -65,13 +66,18 @@ class Queue extends XFCP_Queue
 
                 $emailId = $this->getFailedItemKey($record['mail_data'], $record['queue_date']);
 
-                if ($mailer->send($message))
+                if ($mailer->send($message, $transport))
                 {
-                    $this->deliverySuccess();
+                    $this->deleteFailedMail($emailId);
                 }
                 else
                 {
-                    $this->deliveryFailure();
+                    $this->deliveryFailure($message, $emailId, $record);
+                    if ($transport->isStarted())
+                    {
+                        $transport->stop();
+                        $transport->start();
+                    }
                 }
 
                 if ($maxRunTime && microtime(true) - $s > $maxRunTime)
@@ -92,7 +98,7 @@ class Queue extends XFCP_Queue
             return;
         }
 
-        $latestFailedTime = \XF::repository('SV\EmailQueue:FailedEmailQueue')->getLatestFailedTimestamp();
+        $latestFailedTime = $this->getLatestFailedTimestamp();
         if ($latestFailedTime)
         {
             $options = \XF::options();
