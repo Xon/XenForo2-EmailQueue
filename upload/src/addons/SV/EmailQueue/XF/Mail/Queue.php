@@ -111,7 +111,8 @@ class Queue extends XFCP_Queue
                     INSERT INTO xf_mail_queue (`mail_data`,`queue_date`)
                     SELECT `mail_data`,`queue_date`
                     FROM xf_mail_queue_failed
-                    WHERE dispatched = 0;
+                    WHERE dispatched = 0
+                    FOR UPDATE
                 ');
                 $this->db->query('
                     UPDATE xf_mail_queue_failed
