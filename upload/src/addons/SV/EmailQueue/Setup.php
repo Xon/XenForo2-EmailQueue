@@ -66,7 +66,7 @@ class Setup extends AbstractSetup
             $this->addOrChangeColumn($table,'queue_date', 'int');
             $this->addOrChangeColumn($table,'fail_count', 'int');
             $this->addOrChangeColumn($table,'last_fail_date', 'int');
-            $this->addOrChangeColumn($table,'dispatched', 'BIT')->setDefault(0);
+            $this->addOrChangeColumn($table,'dispatched', 'tinyint', 1)->setDefault(0);
             $table->addKey('dispatched');
             $table->addKey('last_fail_date');
         };
