@@ -13,7 +13,7 @@ class EmailTemplates extends AbstractOption
         /** @var \XF\Repository\Style $styleRepo */
         $styleRepo = \XF::repository('XF:Style');
         /** @var \XF\Repository\Template $templateRepo */
-        $templateRepo = \XF::repository('XF:Style');
+        $templateRepo = \XF::repository('XF:Template');
 
         $masterStyle = $styleRepo->getMasterStyle();
         $emailTemplates = $templateRepo->findEffectiveTemplatesInStyle($masterStyle, 'email')
@@ -21,9 +21,9 @@ class EmailTemplates extends AbstractOption
 
         $selectedTemplates = [];
         $additionalTemplates = [];
-        $values = \array_fill_keys($option->option_value, true);
+        $values = $option->option_value;
         /** @var \XF\Entity\Template $emailTemplate */
-        foreach($emailTemplates as $key => $emailTemplate)
+        foreach ($emailTemplates as $key => $emailTemplate)
         {
             if (isset($values[$emailTemplate->title]))
             {
@@ -35,22 +35,27 @@ class EmailTemplates extends AbstractOption
             }
         }
 
-        return self::getTemplate('sv_emailqueue_option_email_templates', $option, $htmlParams, [
+        return self::getTemplate('admin:sv_emailqueue_option_email_templates', $option, $htmlParams, [
             'selectedTemplates'   => $selectedTemplates,
             'additionalTemplates' => $additionalTemplates,
         ]);
     }
 
-    public static function validateOption(array &$value, Option $option)
+    /**
+     * @param array  $values
+     * @param Option $option
+     * @param string $optionId
+     * @return bool
+     */
+    public static function verifyOption(/** @noinspection PhpUnusedParameterInspection */
+        array &$values, Option $option, $optionId)
     {
-        $existingTemplates = isset($value['existing_templates']) ? $value['existing_templates'] : [];
-        $newTemplates = isset($value['new_templates']) ? $value['new_templates'] : [];
-
-        $selectedTemplates = array_merge($existingTemplates, $newTemplates);
+        $selectedTemplates = isset($values['$inverted']) ? $values['$inverted'] : array_keys($values);
+        $selectedTemplates = \array_filter($selectedTemplates);
 
         if (!$selectedTemplates)
         {
-            $value = [];
+            $values = [];
 
             return true;
         }
@@ -58,7 +63,7 @@ class EmailTemplates extends AbstractOption
         /** @var \XF\Repository\Style $styleRepo */
         $styleRepo = \XF::repository('XF:Style');
         /** @var \XF\Repository\Template $templateRepo */
-        $templateRepo = \XF::repository('XF:Style');
+        $templateRepo = \XF::repository('XF:Template');
 
         $masterStyle = $styleRepo->getMasterStyle();
         $emailTemplateTitles = $templateRepo->findEffectiveTemplatesInStyle($masterStyle, 'email')
@@ -66,19 +71,14 @@ class EmailTemplates extends AbstractOption
                                             ->fetch()
                                             ->toArray();
         $emailTemplateTitles = \array_fill_keys($emailTemplateTitles, true);
-        $value = [];
+        $values = [];
 
         foreach ($selectedTemplates AS $selectedTemplate)
         {
             if (isset($emailTemplateTitles[$selectedTemplate]))
             {
-                $value[] = $selectedTemplate;
+                $values[$selectedTemplate] = true;
             }
-        }
-
-        if (!$value)
-        {
-            return false;
         }
 
         return true;
