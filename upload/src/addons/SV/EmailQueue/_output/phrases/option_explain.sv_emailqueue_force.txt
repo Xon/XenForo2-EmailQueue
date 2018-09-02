@@ -1,1 +1,2 @@
-Forces all email to be queued, if disabled only failed email is queued for resending.
+Forces all email to be queued, if disabled only failed email is queued for resending.<br/>
+In XenForo 2, most email is queued by default
