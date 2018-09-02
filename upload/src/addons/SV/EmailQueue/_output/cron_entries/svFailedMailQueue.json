@@ -1,0 +1,22 @@
+{
+    "cron_class": "SV\\EmailQueue\\Cron\\FailedEmailQueue",
+    "cron_method": "run",
+    "run_rules": {
+        "day_type": "dom",
+        "dom": [
+            -1
+        ],
+        "hours": [
+            0
+        ],
+        "minutes": [
+            5,
+            15,
+            25,
+            35,
+            45,
+            55
+        ]
+    },
+    "active": true
+}

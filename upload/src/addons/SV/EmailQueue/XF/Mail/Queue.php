@@ -82,27 +82,23 @@ class Queue extends XFCP_Queue
 
                 if ($maxRunTime && microtime(true) - $s > $maxRunTime)
                 {
-                    break 2;
+                    return;
                 }
             }
         }
         while ($queue);
     }
 
-    public function runFailed()
+    /**
+     * @param bool $doBackOff
+     */
+    public function runFailed($doBackOff = true)
     {
-        // do not attempt to process email if email is disabled.
-        $config = \XF::config();
-        if (!$config->enableMail || !$config->enableMailQueue)
-        {
-            return;
-        }
-
         $latestFailedTime = $this->getLatestFailedTimestamp();
         if ($latestFailedTime)
         {
             $options = \XF::options();
-            $backOffSeconds = $options->sv_emailqueue_backoff * 60;
+            $backOffSeconds = $doBackOff ? $options->sv_emailqueue_backoff * 60 : 0;
             if ((!$backOffSeconds || microtime(true) > $latestFailedTime + $backOffSeconds))
             {
                 $this->db->beginTransaction();
@@ -164,18 +160,17 @@ class Queue extends XFCP_Queue
     {
         // queue the failed email
         $this->insertFailedMailQueue($mailId, $record['mail_data'], $record['queue_date']);
-        $toEmails = implode(', ', $mailObj->getTo());
+        $toEmails = implode(', ', array_keys($mailObj->getTo()));
         $failedCount = $this->getFailedMailCount($mailId);
         $options = \XF::options();
         if ($options->sv_emailqueue_failures_to_error && $failedCount >= $options->sv_emailqueue_failures_to_error)
         {
-            // TODO Get the exception.
             $this->deleteFailedMail($mailId);
-            \XF::logException(new \Exception(), false, "Abandoning, Email to $toEmails failed: ");
+            \XF::logError("Abandoning, Email to $toEmails failed");
         }
         else if ($options->sv_emailqueue_failures_to_warn && $failedCount >= $options->sv_emailqueue_failures_to_warn)
         {
-            \XF::logException(new \Exception(), false, "Queued, Email to $toEmails failed: ");
+            \XF::logError("Queued, Email to $toEmails failed");
         }
     }
 

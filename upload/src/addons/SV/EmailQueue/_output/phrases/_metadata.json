@@ -1,4 +1,10 @@
 {
+    "cron_entry.svFailedMailQueue.txt": {
+        "global_cache": false,
+        "version_id": 2000071,
+        "version_string": "2.0.0",
+        "hash": "e06e3a0f7a882189d54f50501c1858d6"
+    },
     "option.sv_emailqueue_backoff.txt": {
         "global_cache": false,
         "version_id": 2000070,
