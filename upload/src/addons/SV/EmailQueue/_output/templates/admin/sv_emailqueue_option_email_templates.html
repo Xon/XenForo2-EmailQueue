@@ -2,16 +2,17 @@
             label="{$option.title}"
             hint="{$hintHtml}"
             explain="{$explainHtml}"
+			html="{$listedHtml}"
             >
     <ul class="listPlain inputGroup-container">
-        <xf:checkbox name="{$inputName}[templates][]" value="{$option.option_value}">
+        <xf:checkbox name="{$inputName}[$inverted][]" value="{$option.option_value}">
             <xf:foreach loop="$selectedTemplates" value="$template">
                 <xf:option value="{$template.title}">{$template.title}</xf:option>
             </xf:foreach>
         </xf:checkbox>
 
         <li class="inputGroup" data-xf-init="field-adder">
-            <xf:select name="{$inputName}[templates][]">
+            <xf:select name="{$inputName}[$inverted][]">
                 <xf:foreach loop="$additionalTemplates" value="$template">
                     <xf:option value="{$template.title}">{$template.title}</xf:option>
                 </xf:foreach>
