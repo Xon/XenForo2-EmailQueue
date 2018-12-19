@@ -66,7 +66,7 @@ class Queue extends XFCP_Queue
 
                 $emailId = $this->getFailedItemKey($record['mail_data'], $record['queue_date']);
 
-                if ($mailer->send($message, $transport))
+                if ($mailer->send($message, $transport, null, false))
                 {
                     $this->deleteFailedMail($emailId);
                 }
@@ -110,6 +110,7 @@ class Queue extends XFCP_Queue
                     WHERE dispatched = 0
                     FOR UPDATE
                 ');
+                /** @noinspection SqlWithoutWhere */
                 $this->db->query('
                     UPDATE xf_mail_queue_failed
                     SET dispatched = 1;

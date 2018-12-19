@@ -10,7 +10,7 @@ class Mail extends XFCP_Mail
     /** @var array|null */
     protected $svEmailQueueExclude = null;
 
-    public function send(\Swift_Transport $transport = null)
+    public function send(\Swift_Transport $transport = null, $allowRetry = true)
     {
         if ($this->setupError)
         {
@@ -29,7 +29,7 @@ class Mail extends XFCP_Mail
             return $this->queue();
         }
 
-        $sent = parent::send($transport);
+        $sent = parent::send($transport, false);
         if ($sent)
         {
             return $sent;
