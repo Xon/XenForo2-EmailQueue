@@ -2,15 +2,19 @@
     "legacy_addon_id": "SV_EmailQueue",
     "title": "Email Queuing Enhancements",
     "description": "Persistent retry logic for delivering to the mail transport",
-    "version_id": 2000101,
-    "version_string": "2.0.1",
+    "version_id": 2001000,
+    "version_string": "2.1.0",
     "dev" : "Xon",
     "dev_url": "https://atelieraphelion.com/",
     "faq_url": "",
     "support_url": "https://xenforo.com/community/resources/email-queuing-enhancements.6631/",
     "extra_urls": [],
     "require" : {
+        "XF": [2010000, "XenForo 2.1.0+"],
         "php": ["5.6.0", "PHP 5.6.0+"]
+    },
+    "require-soft": {
+        "php": ["7.2.0", "PHP 7.2.0+", false]
     },
     "icon": ""
 }
