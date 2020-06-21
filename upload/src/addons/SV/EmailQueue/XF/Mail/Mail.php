@@ -10,6 +10,11 @@ class Mail extends XFCP_Mail
     /** @var array|null */
     protected $svEmailQueueExclude = null;
 
+    public function setContent($subject, $htmlBody, $textBody = null)
+    {
+        return parent::setContent($subject, (string)$htmlBody, $textBody === null ? null : (string)$textBody);
+    }
+
     public function send(\Swift_Transport $transport = null, $allowRetry = true)
     {
         if ($this->setupError)
