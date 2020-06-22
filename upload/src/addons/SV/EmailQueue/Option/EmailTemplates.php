@@ -75,7 +75,7 @@ class EmailTemplates extends AbstractOption
 
         foreach ($selectedTemplates AS $selectedTemplate)
         {
-            if (isset($emailTemplateTitles[$selectedTemplate]))
+            if ($selectedTemplate && isset($emailTemplateTitles[$selectedTemplate]))
             {
                 $values[$selectedTemplate] = true;
             }

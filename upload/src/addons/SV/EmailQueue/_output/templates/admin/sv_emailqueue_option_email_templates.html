@@ -13,6 +13,7 @@
 
         <li class="inputGroup" data-xf-init="field-adder">
             <xf:select name="{$inputName}[$inverted][]">
+                <xf:option value="">{{ phrase('(none)') }}</xf:option>
                 <xf:foreach loop="$additionalTemplates" value="$template">
                     <xf:option value="{$template.title}">{$template.title}</xf:option>
                 </xf:foreach>
