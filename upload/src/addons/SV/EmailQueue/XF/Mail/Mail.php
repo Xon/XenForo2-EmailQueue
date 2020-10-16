@@ -3,7 +3,7 @@
 namespace SV\EmailQueue\XF\Mail;
 
 /**
- * @property \SV\EmailQueue\XF\Mail\Mailer $mailer
+ * @property Mailer $mailer
  */
 class Mail extends XFCP_Mail
 {

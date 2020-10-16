@@ -3,7 +3,6 @@
 namespace SV\EmailQueue\Option;
 
 use XF\Entity\Option;
-use XF\Entity\Template;
 use XF\Option\AbstractOption;
 
 class EmailTemplates extends AbstractOption
@@ -46,9 +45,10 @@ class EmailTemplates extends AbstractOption
      * @param Option $option
      * @param string $optionId
      * @return bool
+     * @noinspection PhpMissingParamTypeInspection
+     * @noinspection PhpUnusedParameterInspection
      */
-    public static function verifyOption(/** @noinspection PhpUnusedParameterInspection */
-        array &$values, Option $option, $optionId)
+    public static function verifyOption(array &$values, Option $option, $optionId)
     {
         $selectedTemplates = isset($values['$inverted']) ? $values['$inverted'] : array_keys($values);
         $selectedTemplates = \array_filter($selectedTemplates);
