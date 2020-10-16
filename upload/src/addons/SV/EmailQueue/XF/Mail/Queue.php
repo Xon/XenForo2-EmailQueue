@@ -2,9 +2,14 @@
 
 namespace SV\EmailQueue\XF\Mail;
 
+use \Swift_Mime_SimpleMessage as SwiftMimeSimpleMessage;
+use \Swift_Mime_Message as SwiftMimeMessage;
+
+\class_alias(\XF::$versionId < 2020010 ? SwiftMimeMessage::class : SwiftMimeSimpleMessage::class, '\FinalSwiftMimeMessage');
+
 class Queue extends XFCP_Queue
 {
-    public function queueFailed(\Swift_Mime_Message $message)
+    public function queueFailed(\FinalSwiftMimeMessage $message)
     {
         $toEmails = implode(', ', array_keys($message->getTo()));
 
@@ -59,7 +64,7 @@ class Queue extends XFCP_Queue
                 }
 
                 $message = @unserialize($record['mail_data']);
-                if (!($message instanceof \Swift_Mime_Message))
+                if (!($message instanceof \FinalSwiftMimeMessage))
                 {
                     continue;
                 }
@@ -153,11 +158,11 @@ class Queue extends XFCP_Queue
     }
 
     /**
-     * @param \Swift_Mime_Message $mailObj
-     * @param                     $mailId
-     * @param  array              $record
+     * @param \FinalSwiftMimeMessage $mailObj
+     * @param  string                $mailId
+     * @param  array                 $record
      */
-    function deliveryFailure(\Swift_Mime_Message $mailObj, $mailId, $record)
+    function deliveryFailure(\FinalSwiftMimeMessage $mailObj, $mailId, $record)
     {
         // queue the failed email
         $this->insertFailedMailQueue($mailId, $record['mail_data'], $record['queue_date']);
