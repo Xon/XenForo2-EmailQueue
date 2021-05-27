@@ -1,1 +1,0 @@
-Reprocess the failed mail queue.

@@ -1,1 +1,0 @@
-The number of emails to prefetch from the queue during queue processing.

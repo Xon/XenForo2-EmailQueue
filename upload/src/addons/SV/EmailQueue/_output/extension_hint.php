@@ -6,6 +6,5 @@
 namespace SV\EmailQueue\XF\Mail
 {
 	class XFCP_Mail extends \XF\Mail\Mail {}
-	class XFCP_Mailer extends \XF\Mail\Mailer {}
 	class XFCP_Queue extends \XF\Mail\Queue {}
 }

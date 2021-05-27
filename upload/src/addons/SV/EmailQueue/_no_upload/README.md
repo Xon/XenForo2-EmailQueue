@@ -15,5 +15,5 @@ This addon ensures that the following email sources go via the email queue,
 Additionally, any addons which use XenForo's built in Mail object should also be captured.
 
 Adds the following options under "Email Options"
- 
-Enhances the XenForo Email queue with re-try logic and ensures both the front-end and AdminCP both send via the queue.
+
+Enhances the XenForo Email queue with more complex re-try logic and ensures both the front-end and AdminCP both send via the queue.

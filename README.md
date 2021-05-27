@@ -16,4 +16,4 @@ Additionally, any addons which use XenForo's built in Mail object should also be
 
 Adds the following options under "Email Options"
  
-Enhances the XenForo Email queue with re-try logic and ensures both the front-end and AdminCP both send via the queue.
+Enhances the XenForo Email queue with more complex re-try logic and ensures both the front-end and AdminCP both send via the queue.

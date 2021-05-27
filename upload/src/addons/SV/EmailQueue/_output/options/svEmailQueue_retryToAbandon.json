@@ -5,8 +5,8 @@
     "sub_options": [],
     "validation_class": "",
     "validation_method": "",
-    "default_value": "20",
+    "default_value": "0",
     "relations": {
-        "emailOptions": 1000
+        "emailOptions": 1030
     }
 }

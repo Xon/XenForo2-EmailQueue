@@ -19,12 +19,20 @@ class Mail extends XFCP_Mail
      */
     public function setContent($subject, $htmlBody, $textBody = null)
     {
-        // ensure body is cast to string to avoid trying to send phrases as content
-        $htmlBody = (string)$htmlBody;
-        $textBody = (string)$textBody;
-        if (!\strlen($textBody))
+        if (\XF::$versionId < 2020070)
         {
-            $textBody = null;
+            $subject = (string)$subject;
+            $subject = \preg_replace('#[\r\n\t]\s*#', ' ', $subject);
+            $subject = \preg_replace('#( ){2,}#', ' ', $subject);
+            $subject = \trim($subject);
+
+            // ensure body is cast to string to avoid trying to send phrases as content
+            $htmlBody = (string)$htmlBody;
+            $textBody = (string)$textBody;
+            if (!\strlen($textBody))
+            {
+                $textBody = null;
+            }
         }
 
         return parent::setContent($subject, $htmlBody, $textBody);
@@ -41,7 +49,7 @@ class Mail extends XFCP_Mail
         $options = \XF::options();
         if ($this->svEmailQueueExclude === null)
         {
-            $this->svEmailQueueExclude = array_fill_keys($options->sv_emailqueue_exclude, true);
+            $this->svEmailQueueExclude = \array_fill_keys($options->sv_emailqueue_exclude, true);
         }
 
         if ($options->sv_emailqueue_force && empty($this->svEmailQueueExclude[$this->templateName]))
@@ -49,16 +57,6 @@ class Mail extends XFCP_Mail
             return $this->queue();
         }
 
-        $sent = parent::send($transport, false);
-        if ($sent)
-        {
-            return $sent;
-        }
-
-        // getSendableMessage only renders once
-        /** @var \FinalSwiftMimeMessage $message */
-        $message = $this->getSendableMessage();
-
-        return $this->mailer->getQueue()->queueFailed($message);
+        return parent::send($transport, false);
     }
 }

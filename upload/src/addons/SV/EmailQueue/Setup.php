@@ -7,8 +7,6 @@ use XF\AddOn\AbstractSetup;
 use XF\AddOn\StepRunnerInstallTrait;
 use XF\AddOn\StepRunnerUninstallTrait;
 use XF\AddOn\StepRunnerUpgradeTrait;
-use XF\Db\Schema\Alter;
-use XF\Db\Schema\Create;
 
 class Setup extends AbstractSetup
 {
@@ -17,62 +15,37 @@ class Setup extends AbstractSetup
     use StepRunnerUpgradeTrait;
     use StepRunnerUninstallTrait;
 
-
-    public function installStep1()
-    {
-        $sm = $this->schemaManager();
-
-        foreach ($this->getTables() as $tableName => $callback)
-        {
-            $sm->createTable($tableName, $callback);
-            $sm->alterTable($tableName, $callback);
-        }
-    }
-
     public function upgrade2000000Step1()
     {
-        // can't re-use failed mail queue contents from XF1 => XF2
-        if($this->schemaManager()->tableExists('xf_mail_queue_failed'))
+        $this->cleanupOldTable(false);
+    }
+
+    public function upgrade2030000Step1()
+    {
+        $this->cleanupOldTable();
+    }
+
+    public function upgrade2030000Step2()
+    {
+        $this->renameOption('sv_emailqueue_failures_to_error','svEmailQueue_retryToAbandon');
+    }
+
+    public function uninstallStep1()
+    {
+        $this->cleanupOldTable();
+    }
+
+    protected function cleanupOldTable(bool $requeueContents = true)
+    {
+        if ($requeueContents)
         {
-            $this->db()->query('truncate table xf_mail_queue_failed');
+            $this->db()->query('
+                INSERT INTO xf_mail_queue (`mail_data`,`queue_date`)
+                SELECT `mail_data`,`queue_date`
+                FROM xf_mail_queue_failed
+                WHERE dispatched = 0
+            ');
         }
-    }
-
-    public function upgrade2000071Step1()
-    {
-        $this->installStep1();
-    }
-
-    /**
-     * Drops add-on tables.
-     */
-    public function uninstallStep2()
-    {
-        $sm = $this->schemaManager();
-
-        foreach ($this->getTables() as $tableName => $callback)
-        {
-            $sm->dropTable($tableName);
-        }
-    }
-
-    public function getTables(): array
-    {
-        $tables = [];
-
-        $tables['xf_mail_queue_failed'] = function ($table) {
-            /** @var Create|Alter $table */
-            //$this->addOrChangeColumn($table,'mail_queue_id', 'int')->autoIncrement();
-            $this->addOrChangeColumn($table,'mail_id', 'VARBINARY', 20)->primaryKey();
-            $this->addOrChangeColumn($table,'mail_data', 'MEDIUMBLOB');
-            $this->addOrChangeColumn($table,'queue_date', 'int');
-            $this->addOrChangeColumn($table,'fail_count', 'int');
-            $this->addOrChangeColumn($table,'last_fail_date', 'int');
-            $this->addOrChangeColumn($table,'dispatched', 'tinyint', 1)->setDefault(0);
-            $table->addKey('dispatched');
-            $table->addKey('last_fail_date');
-        };
-
-        return $tables;
+        $this->db()->query('DROP TABLE IF EXISTS xf_mail_queue_failed');
     }
 }
