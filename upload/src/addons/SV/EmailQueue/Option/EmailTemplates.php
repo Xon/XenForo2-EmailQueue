@@ -7,7 +7,7 @@ use XF\Option\AbstractOption;
 
 class EmailTemplates extends AbstractOption
 {
-    public static function renderOption(Option $option, array $htmlParams)
+    public static function renderOption(Option $option, array $htmlParams): string
     {
         /** @var \XF\Repository\Style $styleRepo */
         $styleRepo = \XF::repository('XF:Style');
@@ -45,12 +45,11 @@ class EmailTemplates extends AbstractOption
      * @param Option $option
      * @param string $optionId
      * @return bool
-     * @noinspection PhpMissingParamTypeInspection
      * @noinspection PhpUnusedParameterInspection
      */
-    public static function verifyOption(array &$values, Option $option, $optionId)
+    public static function verifyOption(array &$values, Option $option, string $optionId): bool
     {
-        $selectedTemplates = isset($values['$inverted']) ? $values['$inverted'] : array_keys($values);
+        $selectedTemplates = $values['$inverted'] ?? array_keys($values);
         $selectedTemplates = \array_filter($selectedTemplates);
 
         if (!$selectedTemplates)

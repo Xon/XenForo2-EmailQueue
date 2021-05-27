@@ -46,7 +46,7 @@ class Setup extends AbstractSetup
     /**
      * Drops add-on tables.
      */
-    public function uninstallStep1()
+    public function uninstallStep2()
     {
         $sm = $this->schemaManager();
 
@@ -56,7 +56,7 @@ class Setup extends AbstractSetup
         }
     }
 
-    public function getTables()
+    public function getTables(): array
     {
         $tables = [];
 

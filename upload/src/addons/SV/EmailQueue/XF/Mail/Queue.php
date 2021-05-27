@@ -1,4 +1,7 @@
 <?php
+/**
+ * @noinspection PhpUnnecessaryLeadingBackslashInUseStatementInspection
+ */
 
 namespace SV\EmailQueue\XF\Mail;
 
@@ -9,7 +12,7 @@ use \Swift_Mime_Message as SwiftMimeMessage;
 
 class Queue extends XFCP_Queue
 {
-    public function queueFailed(\FinalSwiftMimeMessage $message)
+    public function queueFailed(\FinalSwiftMimeMessage $message): bool
     {
         $toEmails = implode(', ', array_keys($message->getTo()));
 
@@ -48,12 +51,12 @@ class Queue extends XFCP_Queue
         $mailer = \XF::mailer();
         $options = \XF::options();
 
-        $batchSize = $options->sv_emailqueue_batchsize ? $options->sv_emailqueue_batchsize : null;
+        $batchSize = (int)($options->sv_emailqueue_batchsize ?? 100);
 
         $transport = $mailer->getDefaultTransport();
         do
         {
-            $queue = $this->getQueue($maxRunTime ? $batchSize : null);
+            $queue = $this->getQueue($batchSize);
 
             foreach ($queue AS $id => $record)
             {
@@ -80,7 +83,15 @@ class Queue extends XFCP_Queue
                     $this->deliveryFailure($message, $emailId, $record);
                     if ($transport->isStarted())
                     {
-                        $transport->stop();
+                        try
+                        {
+                            $transport->stop();
+                        }
+                        catch (\Throwable $null)
+                        {
+                            // queue re-processing will be triggered again
+                            return;
+                        }
                         $transport->start();
                     }
                 }
@@ -94,10 +105,7 @@ class Queue extends XFCP_Queue
         while ($queue);
     }
 
-    /**
-     * @param bool $doBackOff
-     */
-    public function runFailed($doBackOff = true)
+    public function runFailed(bool $doBackOff = true)
     {
         $latestFailedTime = $this->getLatestFailedTimestamp();
         if ($latestFailedTime)
@@ -115,10 +123,11 @@ class Queue extends XFCP_Queue
                     WHERE dispatched = 0
                     FOR UPDATE
                 ');
-                /** @noinspection SqlWithoutWhere */
+
                 $this->db->query('
                     UPDATE xf_mail_queue_failed
-                    SET dispatched = 1;
+                    SET dispatched = 1
+                    WHERE dispatched = 0
                 ');
 
                 $this->db->commit();
@@ -140,7 +149,7 @@ class Queue extends XFCP_Queue
         }
     }
 
-    protected function insertFailedMailQueue($mailId, $rawMailObj, $queueDate)
+    protected function insertFailedMailQueue(string $mailId, $rawMailObj, int $queueDate): bool
     {
         $this->db->query('
             INSERT INTO xf_mail_queue_failed
@@ -162,7 +171,7 @@ class Queue extends XFCP_Queue
      * @param  string                $mailId
      * @param  array                 $record
      */
-    function deliveryFailure(\FinalSwiftMimeMessage $mailObj, $mailId, $record)
+    function deliveryFailure(\FinalSwiftMimeMessage $mailObj, string $mailId, array $record)
     {
         // queue the failed email
         $this->insertFailedMailQueue($mailId, $record['mail_data'], $record['queue_date']);
@@ -185,36 +194,26 @@ class Queue extends XFCP_Queue
      * @param int   $queueDate
      * @return string
      */
-    public function getFailedItemKey($rawMailObj, $queueDate)
+    public function getFailedItemKey($rawMailObj, int $queueDate): string
     {
         return sha1($queueDate . $rawMailObj, true);
     }
 
-    /**
-     * @return int
-     */
-    public function getLatestFailedTimestamp()
+    public function getLatestFailedTimestamp(): int
     {
-        return intval($this->db->fetchOne("SELECT max(last_fail_date) FROM xf_mail_queue_failed"));
+        return \intval($this->db->fetchOne("SELECT max(last_fail_date) FROM xf_mail_queue_failed"));
     }
 
-    /**
-     * @param $mailId
-     * @return int|null
-     */
-    public function getFailedMailCount($mailId)
+    public function getFailedMailCount(string $mailId): int
     {
-        return intval($this->db->fetchOne('
+        return \intval($this->db->fetchOne('
             SELECT fail_count
             FROM xf_mail_queue_failed
             WHERE mail_id = ?
         ', $mailId));
     }
 
-    /**
-     * @param $mailId
-     */
-    protected function deleteFailedMail($mailId)
+    protected function deleteFailedMail(string $mailId)
     {
         $this->db->query('
             DELETE
