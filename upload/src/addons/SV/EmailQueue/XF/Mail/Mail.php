@@ -18,7 +18,7 @@ class Mail extends XFCP_Mail
         {
             $options = \XF::options();
             $this->svForceQueue = $options->sv_emailqueue_force ?? false;
-            $this->svEmailQueueExclude = array_fill_keys(\XF::options()->sv_emailqueue_exclude ?? [], true);
+            $this->svEmailQueueExclude = array_fill_keys($options->sv_emailqueue_exclude ?? [], true);
         }
 
         if ($this->svForceQueue && !array_key_exists($this->templateName, $this->svEmailQueueExclude))
