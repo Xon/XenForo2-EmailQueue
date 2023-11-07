@@ -23,7 +23,7 @@ class Queue extends XFCP_Queue
     protected function calculateNextSendDate($previousFailCount)
     {
         $previousFailCount = (int)$previousFailCount;
-        $retryToAbandon = (int)(\XF::options()->svEmailQueue_retryToAbandon ?? 0);
+        $retryToAbandon = (int)(\XF::options()->sv_emailqueue_failures_to_error ?? 0);
         if ($retryToAbandon > 0 && $previousFailCount > $retryToAbandon)
         {
             return null;
