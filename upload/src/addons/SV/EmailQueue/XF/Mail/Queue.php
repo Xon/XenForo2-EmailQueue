@@ -2,7 +2,6 @@
 
 namespace SV\EmailQueue\XF\Mail;
 
-
 class Queue extends XFCP_Queue
 {
     /** @var int[]  */
@@ -19,6 +18,7 @@ class Queue extends XFCP_Queue
     /**
      * @param int $previousFailCount
      * @return int|null
+     * @noinspection PhpMissingReturnTypeInspection
      */
     protected function calculateNextSendDate($previousFailCount)
     {

@@ -1,2 +1,2 @@
-The number of failures before an error is logged, and the email is discarded.
+The number of failures before an error is logged, and the email is discarded.<br/>
 Set to zero to disable.
