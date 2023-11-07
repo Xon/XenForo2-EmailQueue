@@ -1,1 +1,1 @@
-Failure abandon threshold
+Failed email abandon threshold
