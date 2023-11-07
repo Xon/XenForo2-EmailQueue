@@ -1,1 +1,1 @@
-Email templates to exclude
+Email templates to exclude from queueing
