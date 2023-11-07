@@ -1,19 +1,12 @@
-# EmailQueue
+# Email Queuing Enhancements
 
-# Queued Email
+Adjust email sending logic to retry more frequently, and not to aggressively abandon email sending.
 
-This addon ensures that the following email sources go via the email queue,
-- AdminCP - Email Users
-- Spam Cleaner
-- Email Confirmation
-- User Moderation - Approval
-- User Moderation - Rejection
-- Password Reset Request
-- Password Reset
-- Contact Us
+This addon ensures all emails except a short list go via the email queue instead of blocking the request.
 
-Additionally, any addons which use XenForo's built in Mail object should also be captured.
+## Options
 
 Adds the following options under "Email Options"
- 
-Enhances the XenForo Email queue with more complex re-try logic and ensures both the front-end and AdminCP both send via the queue.
+- Queue all email
+- Email templates to exclude from queueing
+- Failed email abandon threshold
