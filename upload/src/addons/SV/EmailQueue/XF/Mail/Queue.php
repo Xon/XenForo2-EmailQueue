@@ -2,6 +2,10 @@
 
 namespace SV\EmailQueue\XF\Mail;
 
+/**
+ * XF2.2
+ * @extends \XF\Mail\Queue
+ */
 class Queue extends XFCP_Queue
 {
     /** @var int[]  */

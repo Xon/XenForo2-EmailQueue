@@ -5,6 +5,10 @@ namespace SV\EmailQueue\XF\Mail;
 use function array_fill_keys;
 use function array_key_exists;
 
+/**
+ * XF2.2
+ * @extends \XF\Mail\Mail
+ */
 class Mail extends XFCP_Mail
 {
     /** @var array<string,true>|null */

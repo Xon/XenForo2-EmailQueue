@@ -2,23 +2,26 @@
 
 namespace SV\EmailQueue\Option;
 
+use SV\StandardLib\Helper;
 use XF\Entity\Option;
+use XF\Entity\Template as TemplateEntity;
 use XF\Option\AbstractOption;
 use XF\Repository\Style as StyleRepo;
 use XF\Repository\Template as TemplateRepo;
 use function array_fill_keys;
+use function array_filter;
+use function array_keys;
+use function count;
 
 class EmailTemplates extends AbstractOption
 {
     public static function renderOption(Option $option, array $htmlParams): string
     {
-        /** @var StyleRepo $styleRepo */
-        $styleRepo = \XF::repository('XF:Style');
-        /** @var TemplateRepo $templateRepo */
-        $templateRepo = \XF::repository('XF:Template');
+        $styleRepo = Helper::repository(StyleRepo::class);
+        $templateRepo = Helper::repository(TemplateRepo::class);
 
         $masterStyle = $styleRepo->getMasterStyle();
-        /** @var array<string,\XF\Entity\Template> $emailTemplates */
+        /** @var array<string,TemplateEntity> $emailTemplates */
         $emailTemplates = $templateRepo->findEffectiveTemplatesInStyle($masterStyle, 'email')
                                        ->fetch();
 
@@ -53,19 +56,17 @@ class EmailTemplates extends AbstractOption
     public static function verifyOption(array &$values, Option $option, string $optionId): bool
     {
         $selectedTemplates = $values['$inverted'] ?? array_keys($values);
-        $selectedTemplates = \array_filter($selectedTemplates);
+        $selectedTemplates = array_filter($selectedTemplates);
 
-        if (!$selectedTemplates)
+        if (count($selectedTemplates) === 0)
         {
             $values = [];
 
             return true;
         }
 
-        /** @var StyleRepo $styleRepo */
-        $styleRepo = \XF::repository('XF:Style');
-        /** @var TemplateRepo $templateRepo */
-        $templateRepo = \XF::repository('XF:Template');
+        $styleRepo = Helper::repository(StyleRepo::class);
+        $templateRepo = Helper::repository(TemplateRepo::class);
 
         $masterStyle = $styleRepo->getMasterStyle();
         $emailTemplateTitles = $templateRepo->findEffectiveTemplatesInStyle($masterStyle, 'email')
