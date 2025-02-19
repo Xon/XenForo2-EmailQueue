@@ -3,7 +3,7 @@
     "title": "Email Queuing Enhancements",
     "description": "Persistent retry logic for delivering to the mail transport",
     "version_id": 1739992263,
-    "version_string": "2.4.0",
+    "version_string": "2.4.1",
     "dev": "Xon",
     "dev_url": "https://atelieraphelion.com/",
     "faq_url": "",

@@ -6,7 +6,7 @@ use SV\StandardLib\Helper;
 use SV\EmailQueue\XF\Mail\XF22\MailPatch as MailPatchXF22;
 
 Helper::repo()->aliasClass(
-    'SV\EmailQueue\XF\Mail',
+    'SV\EmailQueue\XF\Mail\Mail',
     \XF::$versionId < 2030000
         ? MailPatchXF22::class
         : MailPatch::class
