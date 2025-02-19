@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Job\\MailSend",
+    "to_class": "SV\\EmailQueue\\XF\\Job\\MailSend",
+    "execute_order": 10,
+    "active": true
+}

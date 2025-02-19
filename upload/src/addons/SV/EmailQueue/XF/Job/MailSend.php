@@ -1,15 +1,11 @@
 <?php
-/**
- * @noinspection PhpUndefinedClassInspection
- */
 
-namespace SV\EmailQueue\XF\Mail;
+namespace SV\EmailQueue\XF\Job;
 
 /**
- * XF2.2
- * @extends \XF\Mail\Queue
+ * @extends \XF\Job\MailSend
  */
-class Queue extends XFCP_Queue
+class MailSend extends XFCP_MailSend
 {
     /** @var int[]  */
     protected $svRetryThresholds = [
@@ -22,14 +18,10 @@ class Queue extends XFCP_Queue
     /** @var int */
     protected $svFinalRetryBucket = 2 * 60 * 60;
 
-    /**
-     * @param int $previousFailCount
-     * @return int|null
-     * @noinspection PhpMissingReturnTypeInspection
-     */
-    protected function calculateNextSendDate($previousFailCount)
+    /** @noinspection PhpMissingParentCallCommonInspection */
+    protected function calculateNextAttemptDate($previousAttempts): ?int
     {
-        $previousFailCount = (int)$previousFailCount;
+        $previousFailCount = (int)$previousAttempts;
         $retryToAbandon = (int)(\XF::options()->sv_emailqueue_failures_to_error ?? 0);
         if ($retryToAbandon > 0 && $previousFailCount > $retryToAbandon)
         {

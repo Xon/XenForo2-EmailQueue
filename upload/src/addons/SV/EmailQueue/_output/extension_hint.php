@@ -8,6 +8,11 @@
  * @noinspection PhpIllegalPsrClassPathInspection
  */
 
+namespace SV\EmailQueue\XF\Job
+{
+	class XFCP_MailSend extends \XF\Job\MailSend {}
+}
+
 namespace SV\EmailQueue\XF\Mail
 {
 	class XFCP_Mail extends \XF\Mail\Mail {}
