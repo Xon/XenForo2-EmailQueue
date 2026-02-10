@@ -18,7 +18,11 @@ class MailPatch extends XFCP_Mail
     /** @var bool */
     protected $svForceQueue = false;
 
-    public function send(\Swift_Transport $transport = null, $allowRetry = true)
+    /**
+     * @noinspection PhpSignatureMismatchDuringInheritanceInspection
+     * @noinspection PhpUndefinedClassInspection
+     */
+    public function send(?\Swift_Transport $transport = null, $allowRetry = true)
     {
         if ($this->svEmailQueueExclude === null)
         {
